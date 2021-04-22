@@ -1,0 +1,1714 @@
+{
+	"info": {
+		"_postman_id": "6bb40b79-51f6-44f0-b611-f7a3380b8055",
+		"name": "CloudPath 5.8",
+		"description": "This collection includes most of the API calls to create and manage DPSK pools, DPSKs, properties, units and the Tenant Portal.\n* Start by editing the host and APIKEY variables in the Pre-request Script of Authentication/1. Get token, then enter your credentials in the body.\n* You can run all API calls in the order they appear. By the end, you can delete the objects you created.\n* This collection assumes you start without any DPSK pool or property. If you have any, you might need to change the indices [] in the Tests script in some API calls.\n* In Properties and units/5.Create unit, enter your email and phone number in the body. That way, you will receive an email and SMS message with the link for your tenant portal. \n* Before proceeding to the calls in Tenant Portal, use the link to connect a device using the QR code or passphrase.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "1. Get token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"Authorization\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"host\", \"http://10.0.0.239\");",
+									"pm.collectionVariables.set(\"APIKEY\", \"OxcC77TuJwKz\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"username\",\r\n    \"password\": \"password\"\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.globals.set(\"Authorization\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication Servers and users",
+			"item": [
+				{
+					"name": "1. Get authentication servers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"authServerId\", jsonData.contents[0].guid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/authenticationServers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"authenticationServers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get users on authentication server",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/authenticationServers/{{authServerId}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"authenticationServers",
+								"{{authServerId}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DPSK pools and DPSKs",
+			"item": [
+				{
+					"name": "1. Create a DPSK pool",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"dpskPoolId\", jsonData.guid);",
+									"pm.collectionVariables.set(\"dpskPoolLink\", jsonData.links[0].href);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"displayName\": \"MAC Randomization Avoidance Pool Ultra\",\n\"description\": \"\",\n\"enabled\": true,\n\"phraseDefaultLength\": 8,\n\"phraseRandomCharactersType\": \"NUMERIC\",\n\"ssidList\": [\"cloudpath\"],\n\"enforceExpirationDate\": true,\n\"expirationDateType\": \"MONTHS_AFTER_TIME\",\n\"expirationDateValue\": \"1\",\n\"enforceDeviceCountLimit\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get all DPSK pools",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"dpskPoolId\", jsonData.contents[1].guid);",
+									"pm.collectionVariables.set(\"dpskPoolLink\", jsonData.contents[1].links[0].href);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get DPSK pool details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Create DPSK in pool",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"dpskId\", jsonData.guid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"name\":\"Unit 4509\",\r\n\"status\":\"ACTIVE\",\r\n\"ssidList\":[],\r\n\"passphrase\":\"\",\r\n\"useDeviceCountLimit\":false,\r\n\"useExpirationDate\":false,\r\n\"deviceCountLimit\":\"\",\r\n\"vlanid\":\"\",\r\n\"overrideReauthentication\":86400\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}/dpsks",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}",
+								"dpsks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get DPSKs in pool",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"dpskId\", jsonData.contents[0].guid); //edit the enum to select the DPSK"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}/dpsks",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}",
+								"dpsks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Get DPSK details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}/dpsks/{{dpskId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}",
+								"dpsks",
+								"{{dpskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Get DPSK devices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}/dpsks/{{dpskId}}/devices",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}",
+								"dpsks",
+								"{{dpskId}}",
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. Edit DPSK",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"AccountDpsk\", jsonData.guid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"name\":\"{{dpskId}}\",\r\n\"status\":\"ACTIVE\",\r\n\"ssidList\":[],\r\n\"passphrase\":\"\",\r\n\"useDeviceCountLimit\":false,\r\n\"useExpirationDate\":false,\r\n\"deviceCountLimit\":\"\",\r\n\"vlanid\":\"\",\r\n\"overrideReauthentication\":86400\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}/dpsks/{{dpskId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}",
+								"dpsks",
+								"{{dpskId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Enrollments",
+			"item": [
+				{
+					"name": "1. Get all enrollments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"enrollmentId\", jsonData.contents[0].guid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/enrollments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"enrollments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get enrollment DPSKs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/enrollments/{{enrollmentId}}/dpsks",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"enrollments",
+								"{{enrollmentId}}",
+								"dpsks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get enrollment details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/enrollments/{{enrollmentId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"enrollments",
+								"{{enrollmentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get enrollment devices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/enrollments/{{enrollmentId}}/device",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"enrollments",
+								"{{enrollmentId}}",
+								"device"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get enrollment variables",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/enrollments/{{enrollmentId}}/variables",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"enrollments",
+								"{{enrollmentId}}",
+								"variables"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Properties and units",
+			"item": [
+				{
+					"name": "1. Create property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"propertyId\", jsonData.guid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Building 1\",\r\n    \"address\": \"\",\r\n    \"description\": \"\",\r\n    \"enforceMaxUnits\": false,\r\n    \"maxUnits\": 0,\r\n    \"allowSeparateGuestSecret\": true,\r\n    \"managementName\": \"Marcelo Molinari\",\r\n    \"managementPhone\": \"123-456789\",\r\n    \"managementEmail\": \"name@abc.com\",\r\n    \"tenantPortalHelpText\": \"\",\r\n    \"tenantPortalAnnouncements\": \"Welcome to Building 1\",\r\n    \"links\": [\r\n        {\r\n            \"rel\": \"dpskPool\",\r\n            \"href\": \"{{dpskPoolLink}}\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get properties",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"propertyId\", jsonData.contents[0].guid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Edit property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"guid\": \"{{propertyId}}\",\r\n    \"name\": \"Building 1\",\r\n    \"address\": \"\",\r\n    \"description\": \"\",\r\n    \"enforceMaxUnits\": false,\r\n    \"maxUnits\": 0,\r\n    \"allowSeparateGuestSecret\": true,\r\n    \"managementName\": \"Marcelo Molinari\",\r\n    \"managementPhone\": \"954-9947539\",\r\n    \"managementEmail\": \"marcelo.molinari@commscope.com\",\r\n    \"tenantPortalHelpText\": \"\",\r\n    \"tenantPortalAnnouncements\": \"Free Pizza today !!!\",\r\n    \"links\": [\r\n        {\r\n            \"rel\": \"dpskPool\",\r\n            \"href\": \"{{dpskPoolLink}}\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties/{{propertyId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get country code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"countryCode\", jsonData.contents[0].links[0].href);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/system/smsCountryCodes?filter=name(eq:United States)",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"system",
+								"smsCountryCodes"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "name(eq:United States)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Create unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"unitId\", jsonData.guid);",
+									"pm.collectionVariables.set(\"apiHashSecret\", jsonData.apiHashSecret);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"number\": \"2338\",\r\n    \"description\": \"Permanent Resident\",\r\n    \"status\": \"ACTIVE\",\r\n    \"contact\": {\r\n        \"contactName\": \"Marcelo\",\r\n        \"phoneNumber\": \"123-4567890\",\r\n        \"email\": \"name@abc.com\",\r\n        \"links\": [\r\n            {\r\n                \"rel\": \"smsCountryCode\",\r\n                \"href\": \"{{countryCode}}\",\r\n                \"hreflang\": null,\r\n                \"media\": null,\r\n                \"title\": null,\r\n                \"type\": null,\r\n                \"deprecation\": null\r\n            }\r\n        ]\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties/{{propertyId}}/units",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Get units",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"unitId\", jsonData.contents[0].guid);\r",
+									"pm.collectionVariables.set(\"apiHashSecret\", jsonData.contents[0].apiHashSecret);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties/{{propertyId}}/units",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Get single unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"apiHashSecret\", jsonData.apiHashSecret);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties/{{propertyId}}/units/{{unitId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units",
+								"{{unitId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tenant Portal",
+			"item": [
+				{
+					"name": "1. Log in to a unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"unit.Authorization\", jsonData.token);",
+									"pm.collectionVariables.set(\"unitGuid\", jsonData.unitGuid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"hashedSecret\": \"{{apiHashSecret}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/rest/tenant/{{APIKEY}}/properties/{{propertyId}}/units/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"rest",
+								"tenant",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get unit devices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"unitDeviceId\", jsonData.contents[0].guid);",
+									"pm.collectionVariables.set(\"unitDeviceMacAddress\", jsonData.contents[0].macAddress);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{unit.Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/rest/tenant/{{APIKEY}}/properties/{{propertyId}}/units/{{unitGuid}}/devices",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"rest",
+								"tenant",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units",
+								"{{unitGuid}}",
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Edit unit device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{unit.Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"guid\": \"AccountDpskDevice-3bfcadc1-da45-4f65-b397-41852406f260\",\n    \"type\": \"TENANT\",\n    \"displayName\": \"Marcelo's iPhone\",\n    \"macAddress\": \"{{unitDeviceMacAddress}}\",\n    \"description\": \"Marcelo's iPhone using the Private MAC address\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/rest/tenant/{{APIKEY}}/properties/{{propertyId}}/units/{{unitGuid}}/devices/{{unitDeviceId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"rest",
+								"tenant",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units",
+								"{{unitGuid}}",
+								"devices",
+								"{{unitDeviceId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete objects",
+			"item": [
+				{
+					"name": "1. Delete DPSK",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}/dpsks/{{dpskId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}",
+								"dpsks",
+								"{{dpskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Delete unit device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{unit.Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/rest/tenant/{{APIKEY}}/properties/{{propertyId}}/units/{{unitGuid}}/devices/{{unitDeviceId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"rest",
+								"tenant",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units",
+								"{{unitGuid}}",
+								"devices",
+								"{{unitDeviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Delete unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apiHashSecret\": \"{{apiHashSecret}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties/{{propertyId}}/units/{{unitId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}",
+								"units",
+								"{{unitId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Delete property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/properties/{{propertyId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"properties",
+								"{{propertyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Delete DPSK pool",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/admin/apiv2/{{APIKEY}}/dpskPools/{{dpskPoolId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"apiv2",
+								"{{APIKEY}}",
+								"dpskPools",
+								"{{dpskPoolId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": ""
+		},
+		{
+			"key": "APIKEY",
+			"value": ""
+		},
+		{
+			"key": "dpskPoolGuid",
+			"value": ""
+		},
+		{
+			"key": "AccountDpsk",
+			"value": ""
+		},
+		{
+			"key": "enrollmentId",
+			"value": ""
+		},
+		{
+			"key": "dpskPoolId",
+			"value": ""
+		},
+		{
+			"key": "dpskId",
+			"value": ""
+		},
+		{
+			"key": "authServerId",
+			"value": ""
+		},
+		{
+			"key": "propertyId",
+			"value": ""
+		},
+		{
+			"key": "unitId",
+			"value": ""
+		},
+		{
+			"key": "apiHashSecret",
+			"value": ""
+		},
+		{
+			"key": "unitToken",
+			"value": ""
+		},
+		{
+			"key": "unitGuid",
+			"value": ""
+		},
+		{
+			"key": "Authorization",
+			"value": ""
+		},
+		{
+			"key": "Unit.Authorization",
+			"value": ""
+		},
+		{
+			"key": "unit.Authorization",
+			"value": ""
+		},
+		{
+			"key": "dpskPoolLink",
+			"value": ""
+		},
+		{
+			"key": "unitDeviceId",
+			"value": ""
+		},
+		{
+			"key": "countryCode",
+			"value": ""
+		},
+		{
+			"key": "unitMacAddress",
+			"value": ""
+		},
+		{
+			"key": "unitDeviceMacAddress",
+			"value": ""
+		}
+	]
+}
