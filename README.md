@@ -1,5 +1,5 @@
 # Cloudpath-Postman
-This collection includes most of the API calls to create and manage DPSK pools, DPSKs, properties, units and the Tenant Portal.
+This collection includes most of the API calls in Cloudpath release 5.8 to create and manage DPSK pools, DPSKs, properties, units and the Tenant Portal.
 * Start by editing the host and APIKEY variables in the Pre-request Script of Authentication/1. Get token, then enter your credentials in the body.
 * You can run all API calls in the order they appear. By the end, you can delete the objects you created.
 * This collection assumes you start without any DPSK pool or property. If you have any, you might need to change the indices [] in the Tests script in some API calls.
